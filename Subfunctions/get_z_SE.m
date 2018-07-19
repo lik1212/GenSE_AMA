@@ -30,8 +30,8 @@ z_SE(1:2*size_Y,1) = x_hat(1:2*size_Y,1);
 for k_i = 1:size_Y  
     for k_j = 1:size_Y
         delta_phi = x_hat(k_i + size_Y) - x_hat(k_j + size_Y);
-        z_SE(2*size_Y+k_i,1) = z_SE(2*size_Y+k_i,1) + x_hat(k_i) * x_hat(k_j) * ( cos(delta_phi)*G_ij(k_i,k_j) + sin(delta_phi)*B_ij(k_i,k_j));
-        z_SE(3*size_Y+k_i,1) = z_SE(3*size_Y+k_i,1) + x_hat(k_i) * x_hat(k_j) * ( sin(delta_phi)*G_ij(k_i,k_j) - cos(delta_phi)*B_ij(k_i,k_j));
+        z_SE(2*size_Y+k_i,1) = z_SE(2*size_Y+k_i,1) + x_hat(k_i) * x_hat(k_j) * (cos(delta_phi)*G_ij(k_i,k_j) + sin(delta_phi)*B_ij(k_i,k_j));
+        z_SE(3*size_Y+k_i,1) = z_SE(3*size_Y+k_i,1) + x_hat(k_i) * x_hat(k_j) * (sin(delta_phi)*G_ij(k_i,k_j) - cos(delta_phi)*B_ij(k_i,k_j));
     end
 end
 
