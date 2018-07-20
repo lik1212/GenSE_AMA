@@ -33,7 +33,7 @@ Inputs_SE.max_iter = 10         ; % Max num of iteration
 Inputs_SE.z_conv   = 1 * 10^-1  ; % Abort criterion (convergence limit)
 Inputs_SE.U_start  = 400/sqrt(3); % Voltage of iteration start (Flat-Start)
 
-%% Main estimation alfo
+%% Main estimation
 
 tic
 [x_hat, z_hat, z_hat_full, Out_Optional] = GenSE_AMA(z_all_data, z_all_flag, LineInfo, Inputs_SE);
