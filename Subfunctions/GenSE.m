@@ -44,7 +44,7 @@ U_start  = Settings.U_start ;
 z_all_flag_order  = z_all_flag(z_order,:);
 z_all_data_order  = z_all_data(z_order,:);
 
-%% Prepare Y_L1L2L3 & H_index
+%% Prepare Y_L1L2L3, H_index and other constant parameters
 
 [Y_012, Y_012_Node_ID] = LineInfo2Y_012(LineInfo);           % Admittance matrix in symmetrical components
 Y_L1L2L3               = Y_012_to_Y_L1L2L3(Y_012);           % Admittance matrix in phase sequences
@@ -54,7 +54,8 @@ H_index.Node1_ID  = repmat(Y_012_Node_ID,4,1);            	 % H_index contains t
 H_index.Phase     = repmat ([1; 2; 3]   , 4 * num_Nodes, 1); % all meas. functions for U, phi, P and Q
 H_index.Meas_Type = repelem([1; 2; 3; 4], 3 * num_Nodes, 1);
 
-H_flag = NaN(size(z_all_flag_order, 1), 1);                 % Initial vector to sort H_index in the same order as z
+% Slack angle values always last position.
+H_flag = NaN(size(z_all_flag_order, 1) - 3, 1);             % Initial vector to sort H_index in the same order as z, without slack
 for k_z = 1 : numel(H_flag)                                 % Create vector to sort H_index in the same order as z
     H_flag(k_z) = find(...
         H_index.Node1_ID  == z_all_flag_order.Node1_ID (k_z) & ...
@@ -62,21 +63,22 @@ for k_z = 1 : numel(H_flag)                                 % Create vector to s
         H_index.Meas_Type == z_all_flag_order.Meas_Type(k_z));
 end
 
-% H_flag       = H_flag(1 : end - 3);                        % Minus slack
-temp1 = 0.000001; % slack
-R            = diag([z_all_flag_order.Sigma(1:end - 3).^2;temp1; temp1 ; temp1 ]); % Covariance matrix minus slack
-% alpha        = min(diag(R));
+slack_NodeID = z_all_flag_order.Node1_ID(end);                           % Virtual is only the angle of slack
+x_slack_flag = [false(num_Nodes * 3, 1); Y_012_Node_ID == slack_NodeID]; % [Voltage, angle] in x
+R            = diag(z_all_flag_order.Sigma(1 : end - 3));                % Without slack
+z_slack      = z_all_data_order(end - 2 : end, :);                       % Slack values
 
 %% Initial output (results)
 
-num_inst = size(z_all_data, 2); % Number of instances
+num_inst = size(z_all_data_order, 2); % Number of instances
 % Flat start for state vector for all instances
 x_hat = repmat([...
     repmat(U_start,3 * num_Nodes,1); ... % Voltage
     repmat([...                          % Angle
-    z_all_data(z_all_flag.Accur_Type == 3 & z_all_flag.Meas_Type == 2 & z_all_flag.Phase == 1) ; ...
-    z_all_data(z_all_flag.Accur_Type == 3 & z_all_flag.Meas_Type == 2 & z_all_flag.Phase == 2) ; ...
-    z_all_data(z_all_flag.Accur_Type == 3 & z_all_flag.Meas_Type == 2 & z_all_flag.Phase == 3)], num_Nodes, 1)],...
+    z_all_data_order(z_all_flag_order.Accur_Type == 3 & z_all_flag_order.Meas_Type == 2 & z_all_flag_order.Phase == 1) ; ...
+    z_all_data_order(z_all_flag_order.Accur_Type == 3 & z_all_flag_order.Meas_Type == 2 & z_all_flag_order.Phase == 2) ; ...
+    z_all_data_order(z_all_flag_order.Accur_Type == 3 & z_all_flag_order.Meas_Type == 2 & z_all_flag_order.Phase == 3)], ...
+    num_Nodes, 1)],...
     1, num_inst);
 
 z_hat_full = NaN(size(H_index,1)            , num_inst);
@@ -92,32 +94,29 @@ end
 for k_inst = 1 : num_inst
     x_k_hat = x_hat(:, k_inst); % initial state vector
     for k_iter = 1 : max_iter % iteration
-%         x_k_hat(x_slack_flag) = z_slack(:, k_inst);
-        z_SE    = get_z_SE(Y_L1L2L3, Y_012_Node_ID, x_k_hat); % Get the z vector off all measurements of SE, not z_hat!
+        z_SE    = get_z_SE(Y_L1L2L3, Y_012_Node_ID, x_k_hat); % Get the z vector of all measurements of SE, not z_hat!
         z_k_hat = z_SE(H_flag);                               % Estimated measurement vector z_hat
-        delta_z = z_all_data_order(:, k_inst) - z_k_hat; 
-%         sum(delta_z.^2)   % Temp
+        delta_z = z_all_data_order(1 : end - 3, k_inst) - z_k_hat;
         if all(abs(delta_z) < z_conv) % Convergence limit reached
             if nargout > 3            % For optional output
                 flag_conv(k_inst) = true  ;
-                num_iter (k_inst) = k_iter; 
+                num_iter (k_inst) = k_iter;
             end
             break;
         end
-        H_SE = get_H_SE(Y_L1L2L3, Y_012_Node_ID, x_k_hat); % Get the H matrix of SE
-
-        H_AM = H_SE(H_flag,:);                             % Matrix of real-pseudo values, AM stands for augmented matrix
-%         delta_x(:,1)    = (H_AM'*inv(R)*H_AM)\(H_AM'*inv(R)*delta_z); % State vector correction
-        delta_x(:,1)    = (H_AM' / R * H_AM)\(H_AM' / R * delta_z);
-%         delta_x(x_slack_flag) = 0;
-        x_k_hat = x_k_hat + delta_x; % New state vector
+        H_SE = get_H_SE(Y_L1L2L3, Y_012_Node_ID, x_k_hat); % Get the H matrix of all measurements of SE
+        H_k  = H_SE(H_flag,:);                             % Matrix of measurements just in z_hat
+        % Solve SE, values for slack not in it, very important.
+        delta_x(:,1)    = (H_k(:, ~x_slack_flag)' / R * H_k(:, ~x_slack_flag))\(H_k(:, ~x_slack_flag)' / R * delta_z);
+        x_k_hat(~x_slack_flag) = x_k_hat(~x_slack_flag) + delta_x; % New state vector (slack stats the same)
     end
     if nargout > 3 && flag_conv(k_inst) == false % For optional output
         num_iter (k_inst) = max_iter;
     end
-    x_hat     (:, k_inst) = x_k_hat;                % Estimated state vector
-    z_hat     (:, k_inst) = z_k_hat(z_order_back);  % Estimated measurement vector
-    z_hat_full(:, k_inst) = z_SE;                   % Estimation of all important measurements
+    x_hat     (:, k_inst) = x_k_hat;                        % Estimated state vector
+    z_k_hat_wSlack  = [z_k_hat; z_slack(:, k_inst)];        % Add the slack values on last position
+    z_hat     (:, k_inst) = z_k_hat_wSlack(z_order_back);   % Estimated measurement vector
+    z_hat_full(:, k_inst) = z_SE;                           % Estimation of all important measurements
 end
 
 %% Optional output
