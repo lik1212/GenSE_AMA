@@ -31,7 +31,7 @@ z_all_data = z_all_data(:,for_comp);
 
 %% In demo data change virtual measurement to real with some sigma
 
-z_all_flag.Sigma     (z_all_flag.Accur_Type == 3 & z_all_flag.Meas_Type ~= 2) = 0.0001;
+z_all_flag.Sigma     (z_all_flag.Accur_Type == 3 & z_all_flag.Meas_Type ~= 2) = 1; % 0.0001
 z_all_flag.Accur_Type(z_all_flag.Accur_Type == 3 & z_all_flag.Meas_Type ~= 2) = 1;
 
 %% Inputs for State Estimation (can be extended with Inputs)
@@ -43,5 +43,7 @@ Inputs_SE.U_start  = 400/sqrt(3); % Voltage of iteration start (Flat-Start)
 %% Main estimation
 
 tic
+% warning('off','all')
 [x_hat, z_hat, z_hat_full, Out_Optional] = GenSE(z_all_data, z_all_flag, LineInfo, Inputs_SE);
+% warning('on','all')
 toc

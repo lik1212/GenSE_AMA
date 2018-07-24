@@ -54,19 +54,18 @@ H_index.Node1_ID  = repmat(Y_012_Node_ID,4,1);            	 % H_index contains t
 H_index.Phase     = repmat ([1; 2; 3]   , 4 * num_Nodes, 1); % all meas. functions for U, phi, P and Q
 H_index.Meas_Type = repelem([1; 2; 3; 4], 3 * num_Nodes, 1);
 
-HC_flag = NaN(size(z_all_flag_order, 1), 1);                 % Initial vector to sort H_index in the same order as z
-for k_z = 1 : numel(HC_flag)                                 % Create vector to sort H_index in the same order as z
-    HC_flag(k_z) = find(...
+H_flag = NaN(size(z_all_flag_order, 1), 1);                 % Initial vector to sort H_index in the same order as z
+for k_z = 1 : numel(H_flag)                                 % Create vector to sort H_index in the same order as z
+    H_flag(k_z) = find(...
         H_index.Node1_ID  == z_all_flag_order.Node1_ID (k_z) & ...
         H_index.Phase     == z_all_flag_order.Phase    (k_z) & ...
         H_index.Meas_Type == z_all_flag_order.Meas_Type(k_z));
 end
 
-HC_switch = find(z_all_flag_order.Accur_Type == 3, 1);          % HC_switch defines the position were HC_flag seperates virtual from real-pseudo values
-H_flag    = HC_flag(1         : HC_switch - 1, :);              % Position of real-pseudo values in H in relation to z
-C_flag    = HC_flag(HC_switch :           end, :);              % Position of virtual     values in H in relation to z
-R         = diag(z_all_flag_order.Sigma(1 : HC_switch - 1).^2); % Covariance matrix 
-alpha     = min(diag(R));
+% H_flag       = H_flag(1 : end - 3);                        % Minus slack
+temp1 = 0.000001; % slack
+R            = diag([z_all_flag_order.Sigma(1:end - 3).^2;temp1; temp1 ; temp1 ]); % Covariance matrix minus slack
+% alpha        = min(diag(R));
 
 %% Initial output (results)
 
@@ -80,8 +79,8 @@ x_hat = repmat([...
     z_all_data(z_all_flag.Accur_Type == 3 & z_all_flag.Meas_Type == 2 & z_all_flag.Phase == 3)], num_Nodes, 1)],...
     1, num_inst);
 
-z_hat_full = NaN(size(H_index,1), num_inst);
-z_hat      = NaN(numel(HC_flag) , num_inst);
+z_hat_full = NaN(size(H_index,1)            , num_inst);
+z_hat      = NaN(size(z_all_data_order, 1 ) , num_inst);
 if nargout > 3
     flag_conv  = false(num_inst, 1); % Flag for information if converged
     num_iter   = NaN  (num_inst, 1); % Number of iteration
@@ -93,9 +92,11 @@ end
 for k_inst = 1 : num_inst
     x_k_hat = x_hat(:, k_inst); % initial state vector
     for k_iter = 1 : max_iter % iteration
+%         x_k_hat(x_slack_flag) = z_slack(:, k_inst);
         z_SE    = get_z_SE(Y_L1L2L3, Y_012_Node_ID, x_k_hat); % Get the z vector off all measurements of SE, not z_hat!
-        z_k_hat = z_SE([H_flag; C_flag]);                     % Estimated measurement vector z_hat
-        delta_z = z_all_data_order(:, k_inst) - z_k_hat;
+        z_k_hat = z_SE(H_flag);                               % Estimated measurement vector z_hat
+        delta_z = z_all_data_order(:, k_inst) - z_k_hat; 
+%         sum(delta_z.^2)   % Temp
         if all(abs(delta_z) < z_conv) % Convergence limit reached
             if nargout > 3            % For optional output
                 flag_conv(k_inst) = true  ;
@@ -103,23 +104,12 @@ for k_inst = 1 : num_inst
             end
             break;
         end
-%         sum(delta_z.^2)   % Temp
         H_SE = get_H_SE(Y_L1L2L3, Y_012_Node_ID, x_k_hat); % Get the H matrix of SE
+
         H_AM = H_SE(H_flag,:);                             % Matrix of real-pseudo values, AM stands for augmented matrix
-        C_AM = H_SE(C_flag,:);                             % Matrix of virtual     values
-        % Build Hachtel matrix of the augmented matrix approach
-        Hachtel     = [ ...
-            1/alpha.*R                       , H_AM                             , zeros(size(H_AM,1),size(C_AM,1));...
-            H_AM'                            , zeros(size(H_AM,2),size(H_AM,2)) , C_AM'                           ;...
-            zeros(size(C_AM,1),size(H_AM,1)) , C_AM                             , zeros(size(C_AM,1),size(C_AM,1)) ...
-            ];
-        rhs_AM                  = [      ...      % Create right hand side of the LSE for the augmented matrix approach
-            delta_z(1 : HC_switch - 1)  ;...
-            zeros(size(C_AM,2),1)       ;...
-            delta_z(HC_switch :   end)  ;...
-            ];
-        solution_vector = Hachtel \ rhs_AM;
-        delta_x(:,1)    = solution_vector(HC_switch : end - numel(C_flag)); % State vector correction
+%         delta_x(:,1)    = (H_AM'*inv(R)*H_AM)\(H_AM'*inv(R)*delta_z); % State vector correction
+        delta_x(:,1)    = (H_AM'*inv(R)*H_AM)\(H_AM'*inv(R)*delta_z);
+%         delta_x(x_slack_flag) = 0;
         x_k_hat = x_k_hat + delta_x; % New state vector
     end
     if nargout > 3 && flag_conv(k_inst) == false % For optional output
@@ -135,5 +125,6 @@ end
 if nargout > 3
     Out_Optional.flag_conv = flag_conv;
     Out_Optional.num_iter  = num_iter ;
+    Out_Optional.H_index   = H_index;
 end
 
