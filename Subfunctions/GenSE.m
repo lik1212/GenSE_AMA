@@ -108,7 +108,7 @@ for k_inst = 1 : num_inst
 
         H_AM = H_SE(H_flag,:);                             % Matrix of real-pseudo values, AM stands for augmented matrix
 %         delta_x(:,1)    = (H_AM'*inv(R)*H_AM)\(H_AM'*inv(R)*delta_z); % State vector correction
-        delta_x(:,1)    = (H_AM'*inv(R)*H_AM)\(H_AM'*inv(R)*delta_z);
+        delta_x(:,1)    = (H_AM' / R * H_AM)\(H_AM' / R * delta_z);
 %         delta_x(x_slack_flag) = 0;
         x_k_hat = x_k_hat + delta_x; % New state vector
     end
