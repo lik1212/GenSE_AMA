@@ -18,22 +18,28 @@ path(pathdef); clear; close; clc
 
 %% Path preperation
 
-addpath([pwd,'\Subfunctions']);  % Add subfunction path
+addpath([pwd,'\Subfunctions'        ]);  % Add subfunction path
 
 %% Load Demo Data
 
-load([pwd,'\Demo_Data\Demo_Data_v2.mat']); 
+% load([pwd,'\Demo_Data\Demo_Data_S1a.mat']); 
+load([pwd,'\Demo_Data\Demo_Data_S1a_noisy.mat']); 
+
+%% Inputs for State Estimation (can be extended with Inputs)
+
+Inputs_SE.max_iter = 10         ; % Max num of iteration
+Inputs_SE.z_conv   = 5 * 10^-1  ; % Abort criterion (convergence limit)
+Inputs_SE.U_start  = 400/sqrt(3); % Voltage of iteration start (Flat-Start)
+
+%% Reduce measurements
+
+% time_steps = 1:100;
+% z_all_data = z_all_data(:,time_steps);
 
 %% In demo data change virtual measurement to real with some sigma
 
 z_all_flag.Sigma     (z_all_flag.Accur_Type == 3 & z_all_flag.Meas_Type ~= 2) = 1;
 z_all_flag.Accur_Type(z_all_flag.Accur_Type == 3 & z_all_flag.Meas_Type ~= 2) = 1;
-
-%% Inputs for State Estimation (can be extended with Inputs)
-
-Inputs_SE.max_iter = 10         ; % Max num of iteration
-Inputs_SE.z_conv   = 1 * 10^-2  ; % Abort criterion (convergence limit)
-Inputs_SE.U_start  = 400/sqrt(3); % Voltage of iteration start (Flat-Start)
 
 %% Main estimation
 
