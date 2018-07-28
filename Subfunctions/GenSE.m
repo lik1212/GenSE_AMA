@@ -125,5 +125,6 @@ if nargout > 3
     Out_Optional.flag_conv = flag_conv;
     Out_Optional.num_iter  = num_iter ;
     Out_Optional.H_index   = H_index;
+    Out_Optional.Y_L1L2L3  = Y_L1L2L3;
 end
 
