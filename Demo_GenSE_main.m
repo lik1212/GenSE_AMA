@@ -46,5 +46,6 @@ z_all_flag.Accur_Type(z_all_flag.Accur_Type == 3 & z_all_flag.Meas_Type ~= 2) = 
 %% Main estimation
 
 tic
-[x_hat, z_hat, z_hat_full, Out_Optional] = GenSE(z_all_data, z_all_flag, LineInfo, Inputs_SE);
+[x_hat, z_hat, z_hat_full, Out_Optional] = GenSE(z_all_data, z_all_flag, LineInfo, Inputs_SE);       % without AMA
+% [x_hat, z_hat, z_hat_full, Out_Optional] = GenSE_AMA(z_all_data, z_all_flag, LineInfo, Inputs_SE); % with    AMA
 toc
