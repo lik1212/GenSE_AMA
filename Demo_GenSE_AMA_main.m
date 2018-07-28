@@ -3,9 +3,6 @@
 %  the input data description for more details. 
 %
 % Author(s):    R. Brandalik
-%               D. Henschel
-%               J. Tu
-%               P. Gassler
 %
 % Contact: brandalikrobert@gmail.com, brandalik@eit.uni-kl.de
 %
@@ -25,13 +22,21 @@ addpath([pwd,'\Subfunctions']);  % Add subfunction path
 
 %% Load Demo Data
 
-load([pwd,'\Demo_Data\Demo_Data_v2.mat']); 
+Grid = 'S1a_de';
+
+% load([pwd,'\Demo_Data\Demo_Data_', Grid, '.mat']); 
+load([pwd,'\Demo_Data\Demo_Data_', Grid, '_noisy.mat']); 
 
 %% Inputs for State Estimation (can be extended with Inputs)
 
 Inputs_SE.max_iter = 10         ; % Max num of iteration
-Inputs_SE.z_conv   = 1 * 10^-1  ; % Abort criterion (convergence limit)
+Inputs_SE.z_conv   = 5 * 10^-1  ; % Abort criterion (convergence limit)
 Inputs_SE.U_start  = 400/sqrt(3); % Voltage of iteration start (Flat-Start)
+
+%% Reduce measurements
+
+% time_steps = 1:100;
+% z_all_data = z_all_data(:,time_steps);
 
 %% Main estimation
 
