@@ -71,3 +71,4 @@ h1 = plot([time_steps; time_steps], [min_diff_I1; max_diff_I1], 'Color', [0     
 h2 = plot([time_steps; time_steps], [min_diff_I2; max_diff_I2], 'Color', [0.8500 0.3250 0.0980]);
 h3 = plot([time_steps; time_steps], [min_diff_I3; max_diff_I3], 'Color', [0.9290 0.6940 0.1250]);
 legend([h1(1) h2(1) h3(1)],{'L1','L2','L3'});
+ylabel('Error in A');
