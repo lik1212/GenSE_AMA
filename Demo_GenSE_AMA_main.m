@@ -30,7 +30,7 @@ load([pwd,'\Demo_Data\Demo_Data_', Grid, '_noisy.mat']);
 %% Inputs for State Estimation (can be extended with Inputs)
 
 Inputs_SE.max_iter = 10         ; % Max num of iteration
-Inputs_SE.z_conv   = 5 * 10^-1  ; % Abort criterion (convergence limit)
+Inputs_SE.z_conv   = 1 * 10^-0  ; % Abort criterion (convergence limit)
 Inputs_SE.U_start  = 400/sqrt(3); % Voltage of iteration start (Flat-Start)
 
 %% Reduce measurements

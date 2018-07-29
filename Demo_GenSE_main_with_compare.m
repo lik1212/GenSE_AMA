@@ -36,7 +36,7 @@ BranchRes_all_exakt = load([pwd,'\Comparison_Data\', Grid, '_BranchRes_raw_wo_TR
 %% Inputs for State Estimation (can be extended with Inputs)
 
 Inputs_SE.max_iter = 10         ; % Max num of iteration
-Inputs_SE.z_conv   = 5 * 10^-1  ; % Abort criterion (convergence limit)
+Inputs_SE.z_conv   = 1 * 10^-0  ; % Abort criterion (convergence limit)
 Inputs_SE.U_start  = 400/sqrt(3); % Voltage of iteration start (Flat-Start)
 
 %% If reduced measurements time steps wanted
