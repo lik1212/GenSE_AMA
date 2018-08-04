@@ -105,7 +105,7 @@ for k_inst = 1 : num_inst
             break;
         end
         H_SE = get_H_SE(Y_L1L2L3, Y_012_Node_ID, x_k_hat); % Get the H matrix of all measurements of SE
-        H_k  = H_SE(H_flag,:);                             % Matrix of measurements just in z_hat
+        H_k  = sparse(H_SE(H_flag,:));                             % Matrix of measurements just in z_hat
         % Solve SE, values for slack not in it, very important.
         delta_x(:,1)    = (H_k(:, ~x_slack_flag)' / R * H_k(:, ~x_slack_flag))\(H_k(:, ~x_slack_flag)' / R * delta_z);
         x_k_hat(~x_slack_flag) = x_k_hat(~x_slack_flag) + delta_x; % New state vector (slack stats the same)
