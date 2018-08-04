@@ -27,26 +27,26 @@ BranchRes_all_exakt = sortrows(BranchRes_all_exakt,'ResTime','ascend');
 
 % For plots preperation
 
-min_diff_U1 = min(reshape(NodeRes_all_exakt.U1, [], numel(time_steps)) - reshape(NodeRes_all_estim.U1, [], numel(time_steps)))*10^3;
-max_diff_U1 = max(reshape(NodeRes_all_exakt.U1, [], numel(time_steps)) - reshape(NodeRes_all_estim.U1, [], numel(time_steps)))*10^3;
+min_diff_U1 = min(reshape(NodeRes_all_estim.U1, [], numel(time_steps)) - reshape(NodeRes_all_exakt.U1, [], numel(time_steps)))*10^3;
+max_diff_U1 = max(reshape(NodeRes_all_estim.U1, [], numel(time_steps)) - reshape(NodeRes_all_exakt.U1, [], numel(time_steps)))*10^3;
 
-min_diff_U2 = min(reshape(NodeRes_all_exakt.U2, [], numel(time_steps)) - reshape(NodeRes_all_estim.U2, [], numel(time_steps)))*10^3;
-max_diff_U2 = max(reshape(NodeRes_all_exakt.U2, [], numel(time_steps)) - reshape(NodeRes_all_estim.U2, [], numel(time_steps)))*10^3;
+min_diff_U2 = min(reshape(NodeRes_all_estim.U2, [], numel(time_steps)) - reshape(NodeRes_all_exakt.U2, [], numel(time_steps)))*10^3;
+max_diff_U2 = max(reshape(NodeRes_all_estim.U2, [], numel(time_steps)) - reshape(NodeRes_all_exakt.U2, [], numel(time_steps)))*10^3;
 
-min_diff_U3 = min(reshape(NodeRes_all_exakt.U3, [], numel(time_steps)) - reshape(NodeRes_all_estim.U3, [], numel(time_steps)))*10^3;
-max_diff_U3 = max(reshape(NodeRes_all_exakt.U3, [], numel(time_steps)) - reshape(NodeRes_all_estim.U3, [], numel(time_steps)))*10^3;
+min_diff_U3 = min(reshape(NodeRes_all_estim.U3, [], numel(time_steps)) - reshape(NodeRes_all_exakt.U3, [], numel(time_steps)))*10^3;
+max_diff_U3 = max(reshape(NodeRes_all_estim.U3, [], numel(time_steps)) - reshape(NodeRes_all_exakt.U3, [], numel(time_steps)))*10^3;
 
 min_diff_U = min([min_diff_U1; min_diff_U2; min_diff_U3]);
 max_diff_U = max([max_diff_U1; max_diff_U2; max_diff_U3]);
 
-min_diff_I1 = min(reshape(BranchRes_all_exakt.I1, [], numel(time_steps)) - reshape(BranchRes_all_estim.I1, [], numel(time_steps)))*10^3;
-max_diff_I1 = max(reshape(BranchRes_all_exakt.I1, [], numel(time_steps)) - reshape(BranchRes_all_estim.I1, [], numel(time_steps)))*10^3;
+min_diff_I1 = min(reshape(BranchRes_all_estim.I1, [], numel(time_steps)) - reshape(BranchRes_all_exakt.I1, [], numel(time_steps)))*10^3;
+max_diff_I1 = max(reshape(BranchRes_all_estim.I1, [], numel(time_steps)) - reshape(BranchRes_all_exakt.I1, [], numel(time_steps)))*10^3;
 
-min_diff_I2 = min(reshape(BranchRes_all_exakt.I2, [], numel(time_steps)) - reshape(BranchRes_all_estim.I2, [], numel(time_steps)))*10^3;
-max_diff_I2 = max(reshape(BranchRes_all_exakt.I2, [], numel(time_steps)) - reshape(BranchRes_all_estim.I2, [], numel(time_steps)))*10^3;
+min_diff_I2 = min(reshape(BranchRes_all_estim.I2, [], numel(time_steps)) - reshape(BranchRes_all_exakt.I2, [], numel(time_steps)))*10^3;
+max_diff_I2 = max(reshape(BranchRes_all_estim.I2, [], numel(time_steps)) - reshape(BranchRes_all_exakt.I2, [], numel(time_steps)))*10^3;
 
-min_diff_I3 = min(reshape(BranchRes_all_exakt.I3, [], numel(time_steps)) - reshape(BranchRes_all_estim.I3, [], numel(time_steps)))*10^3;
-max_diff_I3 = max(reshape(BranchRes_all_exakt.I3, [], numel(time_steps)) - reshape(BranchRes_all_estim.I3, [], numel(time_steps)))*10^3;
+min_diff_I3 = min(reshape(BranchRes_all_estim.I3, [], numel(time_steps)) - reshape(BranchRes_all_exakt.I3, [], numel(time_steps)))*10^3;
+max_diff_I3 = max(reshape(BranchRes_all_estim.I3, [], numel(time_steps)) - reshape(BranchRes_all_exakt.I3, [], numel(time_steps)))*10^3;
 
 min_diff_I = min([min_diff_I1; min_diff_I2; min_diff_I3]);
 max_diff_I = max([max_diff_I1; max_diff_I2; max_diff_I3]);
