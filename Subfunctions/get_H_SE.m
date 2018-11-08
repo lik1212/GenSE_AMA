@@ -38,7 +38,7 @@ for k_i = 1 : size_Y
             H_SE(3 * size_Y + k_i, size_Y + k_j) = x_hat(k_i) * x_hat(k_j) * (-cos(delta_phi) * G_ij(k_i, k_j) - sin(delta_phi) * B_ij(k_i, k_j)); % Q_i/phi_j
         else
             H_SE(2 * size_Y + k_i,          k_i) = H_SE(2 * size_Y + k_i,          k_i) +              x_hat(k_j) * ( cos(delta_phi) * G_ij(k_i,k_j) + sin(delta_phi) * B_ij(k_i,k_j)); % P_i/  U_i
-            H_SE(2 * size_Y + k_i, size_Y + k_i) = H_SE(2 * size_Y + k_i, size_Y + k_i) - x_hat(k_i) * x_hat(k_j) * ( sin(delta_phi) * G_ij(k_i,k_j) + cos(delta_phi) * B_ij(k_i,k_j)); % P_i/phi_i
+            H_SE(2 * size_Y + k_i, size_Y + k_i) = H_SE(2 * size_Y + k_i, size_Y + k_i) - x_hat(k_i) * x_hat(k_j) * (-sin(delta_phi) * G_ij(k_i,k_j) + cos(delta_phi) * B_ij(k_i,k_j)); % P_i/phi_i
             H_SE(3 * size_Y + k_i,          k_i) = H_SE(3 * size_Y + k_i,          k_i) +              x_hat(k_j) * ( sin(delta_phi) * G_ij(k_i,k_j) - cos(delta_phi) * B_ij(k_i,k_j)); % Q_i/  U_i
             H_SE(3 * size_Y + k_i, size_Y + k_i) = H_SE(3 * size_Y + k_i, size_Y + k_i) - x_hat(k_i) * x_hat(k_j) * ( cos(delta_phi) * G_ij(k_i,k_j) + sin(delta_phi) * B_ij(k_i,k_j)); % Q_i/phi_i
         end
