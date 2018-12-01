@@ -24,14 +24,15 @@ addpath([pwd,'\Comparison_Functions']);  % Add comparison subfunction path
 %% Load Demo Data
 
 Grid = 'S1a_de';
+ResDate = '';
 
-% load([pwd,'\Demo_Data\Demo_Data_', Grid, '.mat']); 
-load([pwd,'\Demo_Data\Demo_Data_', Grid, '_noisy.mat']); 
+% load([pwd,'\Demo_Data\Demo_Data_', Grid, ResTime,          '.mat']); 
+load([pwd,'\Demo_Data\Demo_Data_', Grid, ResDate, '_noisy.','mat']); 
 
 % Just for comparison
 load([pwd,'\Comparison_Data\SinInfo_', Grid, '.mat']); 
-NodeRes_all_exakt   = load([pwd,'\Comparison_Data\', Grid, '_NodeRes_raw_wo_TR.mat'  ]);
-BranchRes_all_exakt = load([pwd,'\Comparison_Data\', Grid, '_BranchRes_raw_wo_TR.mat']);
+NodeRes_all_exakt   = load([pwd,'\Comparison_Data\', Grid, '_NodeRes_raw'  , ResDate, '_wo_TR.mat']);
+BranchRes_all_exakt = load([pwd,'\Comparison_Data\', Grid, '_BranchRes_raw', ResDate, '_wo_TR.mat']);
 
 %% Inputs for State Estimation (can be extended with Inputs)
 
