@@ -26,7 +26,7 @@ addpath([pwd,'\Comparison_Functions']);  % Add comparison subfunction path
 Grid = 'S1a_de';
 ResDate = '';
 
-% load([pwd,'\Demo_Data\Demo_Data_', Grid, ResTime,          '.mat']); 
+% load([pwd,'\Demo_Data\Demo_Data_', Grid, ResDate,          '.mat']); 
 load([pwd,'\Demo_Data\Demo_Data_', Grid, ResDate, '_noisy.','mat']); 
 
 % Just for comparison
