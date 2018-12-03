@@ -21,18 +21,32 @@ path(pathdef); clear; close all; clc
 addpath([pwd,'\Subfunctions'        ]);  % Add subfunction path
 addpath([pwd,'\Comparison_Functions']);  % Add comparison subfunction path
 
+%% Input Prepareration
+
+Input_Prep                  = struct   ;
+Input_Prep.Grid_Name        = 'S1a_de' ;
+Input_Prep.ResDate          = ''       ;
+Input_Prep.LF_Res_Path      = [pwd,'\Comparison_Data\'];
+Input_Prep.SinInfo_Path     = [pwd,'\Comparison_Data\'];
+Input_Prep.SE_Inputs_Path   = [pwd,'\Demo_Data\'];
+Input_Prep.NodeRes_Name     = [Input_Prep.Grid_Name, '_NodeRes_raw',   Input_Prep.ResDate, '.mat'];
+Input_Prep.BranchRes_Name   = [Input_Prep.Grid_Name, '_BranchRes_raw', Input_Prep.ResDate, '.mat'];
+Input_Prep.with_TR    = true                                                                     ;
+
+if Input_Prep.with_TR
+    Input_Prep.NodeRes_Name       = [Input_Prep.      NodeRes_Name(1 : end - 4) ,'_wo_TR.mat'];
+    Input_Prep.BranchRes_Name     = [Input_Prep.    BranchRes_Name(1 : end - 4) ,'_wo_TR.mat'];
+end
+
 %% Load Demo Data
 
-Grid = 'S1a_de';
-ResDate = '';
-
-% load([pwd,'\Demo_Data\Demo_Data_', Grid, ResDate,          '.mat']); 
-load([pwd,'\Demo_Data\Demo_Data_', Grid, ResDate, '_noisy.','mat']); 
+load([Input_Prep.SE_Inputs_Path, 'Demo_Data_', Input_Prep.Grid_Name, Input_Prep.ResDate,          '.mat']); 
+load([Input_Prep.SE_Inputs_Path, 'Demo_Data_', Input_Prep.Grid_Name, Input_Prep.ResDate, '_noisy.','mat']); 
 
 % Just for comparison
-load([pwd,'\Comparison_Data\SinInfo_', Grid, '.mat']); 
-NodeRes_all_exakt   = load([pwd,'\Comparison_Data\', Grid, '_NodeRes_raw'  , ResDate, '_wo_TR.mat']);
-BranchRes_all_exakt = load([pwd,'\Comparison_Data\', Grid, '_BranchRes_raw', ResDate, '_wo_TR.mat']);
+load([Input_Prep.SinInfo_Path, 'SinInfo_', Input_Prep.Grid_Name, '.mat']); 
+NodeRes_all_exakt   = load([Input_Prep.LF_Res_Path, Input_Prep.NodeRes_Name  ]);
+BranchRes_all_exakt = load([Input_Prep.LF_Res_Path, Input_Prep.BranchRes_Name]);
 
 %% Inputs for State Estimation (can be extended with Inputs)
 

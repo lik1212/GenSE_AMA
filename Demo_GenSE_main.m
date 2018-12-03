@@ -22,10 +22,11 @@ addpath([pwd,'\Subfunctions']);  % Add subfunction path
 
 %% Load Demo Data
 
-Grid = 'S1a_de';
+Input_Prep           = struct   ;
+Input_Prep.Grid_Name = 'S1a_de' ;
 
 % load([pwd,'\Demo_Data\Demo_Data_', Grid, '.mat']); 
-load([pwd,'\Demo_Data\Demo_Data_', Grid, '_noisy.mat']); 
+load([pwd,'\Demo_Data\Demo_Data_', Input_Prep.Grid_Name, '_noisy.mat']); 
 
 %% Inputs for State Estimation (can be extended with Inputs)
 
